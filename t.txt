@@ -26,4 +26,21 @@
           logger.debug "sendGcm result: #{JSON.stringify(result)}"
 
 
+password sent to server:
+========================
+
+  app.post "/keytoken", setNoCache, (req, res, next) ->
+    return res.send 400 unless req.body?.username?
+    return res.send 400 unless req.body?.authSig?
+    return res.send 400 unless req.body?.password?
+
+    username = req.body.username
+    password = req.body.password
+    authSig = req.body.authSig
+    validateUser username, password, authSig, (err, status, user) ->
+      return next err if err?
+      return res.send 403 unless user?
+
+
+
 
