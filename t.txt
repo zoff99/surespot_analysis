@@ -1,4 +1,5 @@
 
+all messages (although encrypted) are sent via Google Servers
 "pop entire message into gcm message if it's small enough":
 ===========================================================
 
@@ -26,8 +27,8 @@
           logger.debug "sendGcm result: #{JSON.stringify(result)}"
 
 
-password sent to server:
-========================
+user password seems to be everywhere on the surespot server:
+============================================================
 
   app.post "/keytoken", setNoCache, (req, res, next) ->
     return res.send 400 unless req.body?.username?
