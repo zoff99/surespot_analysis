@@ -1,0 +1,29 @@
+
+"pop entire message into gcm message if it's small enough":
+===========================================================
+
+        logger.debug "sending gcms for message"
+        gcmmessage = new gcm.Message()
+        logger.debug "gcm message created"
+        sender = new gcm.Sender("#{googleApiKey}",  {maxSockets: MAX_GCM_SOCKETS})
+        logger.debug "gcm sender created"
+        gcmmessage.addData("type", "message")
+        gcmmessage.addData("to", message.to)
+        gcmmessage.addData("sentfrom", message.from)
+        gcmmessage.addData("mimeType", message.mimeType)
+        #pop entire message into gcm message if it's small enough
+        if messagejson.length <= 3800
+          gcmmessage.addData("message", messagejson)
+
+        gcmmessage.delayWhileIdle = false
+        gcmmessage.timeToLive = GCM_TTL
+
+        logger.debug "gcm data set"
+
+        logger.debug "sending push messages to: #{ids[0]}"
+        sender.send gcmmessage, gcmIds, GCM_RETRIES, (err, result) ->
+          return logger.error "Error sending message gcm from: #{message.from}, to: #{message.to}: #{err}" if err? or not result?
+          logger.debug "sendGcm result: #{JSON.stringify(result)}"
+
+
+
