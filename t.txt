@@ -43,4 +43,36 @@ password sent to server:
 
 
 
+and
+
+
+  app.post "/keys", (req, res, next) ->
+    logger.debug "/keys"
+    return res.send 400 unless req.body?.username?
+    return res.send 400 unless req.body?.authSig?
+    return res.send 400 unless req.body?.password?
+
+and
+
+
+        logger.debug "received token signature: " + req.body.tokenSig
+        logger.debug "received auth signature: " + req.body.authSig
+        logger.debug "token: " + rtoken
+
+        password = req.body.password
+
+        #validate the signature against the token
+
+        getLatestKeys username, (err, keys) ->
+          return next err if err?
+          return next new Error "no keys exist for user #{username}" unless keys?
+
+          verified = verifySignature new Buffer(rtoken, 'base64'), new Buffer(password), req.body.tokenSig, keys.dsaPub
+          return res.send 403 unless verified
+
+          authSig = req.body.authSig
+          validateUser username, password, authSig,(err, status, user) ->
+            return next err if err?
+            return res.send 403 unless user?
+
 
