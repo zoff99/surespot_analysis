@@ -75,4 +75,10 @@ and
             return next err if err?
             return res.send 403 unless user?
 
+and
+
+
+  comparePassword = (password, dbpassword, callback) ->
+    bcrypt.compare password, dbpassword, callback
+
 
